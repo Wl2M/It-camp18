@@ -1,7 +1,5 @@
 <template>
-  <h1 style="margin-top: 20px; margin-left: 50px; margin-bottom: -50px">
-    IT Camp member
-  </h1>
+  <h1 style="margin-top: 20px; margin-left: 50px; margin-bottom: -50px">IT Camp member</h1>
   <v-card style="background-color: #f7f7f7" class="pa-4 ma-15">
     <h1>ค้นหาชื่อ</h1>
     <br />
@@ -245,14 +243,40 @@ export default {
 </script>
 
 <style scoped>
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
 .grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
 }
 .icon {
   display: none;
 }
 .card:hover .icon {
   display: block;
+}
+.bak {
+  background-image: url("https://img.freepik.com/free-photo/pink-yellow-plain-background_53876-98329.jpg?w=2000");
+  background-size: cover;
+}
+.bak h1 {
+  padding-top: 2rem;
+  padding-left: 2rem;
+}
+.add {
+  padding-left: 2rem;
+}
+.search {
+  padding-left: 2rem;
+}
+.addname {
+  padding-left: 2rem;
+}
+.box {
+  display: flex;
 }
 </style>
