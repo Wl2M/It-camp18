@@ -201,7 +201,7 @@
               </v-card-text>
             </v-card-subtitle>
           </v-card>
-          <v-card v-if="input && !filteredList.length"
+          <v-card v-if="nameSearch && !filteredList.length"
             ><v-card-text>Not Found</v-card-text>
           </v-card>
         </div>
