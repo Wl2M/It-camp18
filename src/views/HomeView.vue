@@ -1,5 +1,11 @@
 <template>
   <HelloWorld />
+          <v-text-field
+            v-model="first"
+            label="First Name"
+            variant="outlined"
+            shaped
+          ></v-text-field>
 </template>
 
 <script>
