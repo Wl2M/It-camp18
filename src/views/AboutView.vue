@@ -42,7 +42,7 @@
             <v-container>
               <v-col cols="12" sm="10">
                 <v-text-field
-                  label="url image"
+                  label="image url"
                   v-model="urlInput"
                 ></v-text-field>
               </v-col>
@@ -56,6 +56,7 @@
                     color="primary"
                     v-model="nameInput"
                     outlined
+                    label="ชื่อ"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -69,6 +70,7 @@
                     color="primary"
                     v-model="messageInput"
                     outlined
+                    label="คำคม"
                   ></v-text-field>
                 </v-col>
               </v-row>
@@ -81,7 +83,7 @@
                   <v-select
                     :items="items"
                     v-model="homeInput"
-                    label="Standard variant"
+                    label="เลือกบ้าน"
                   ></v-select>
                 </v-col>
                 <v-col cols="12" sm="2">
@@ -118,7 +120,7 @@
             v-for="(card, index) in filteredList"
             :key="card.id"
             class="mx-auto card"
-            style="width: 100%"  
+            style="width: 100%"
           >
             <img
               class="img"
@@ -134,22 +136,37 @@
                   <v-container>
                     <v-text-field
                       label="url image"
-                      v-model="churl"
+                      v-model="ch.url"
                     ></v-text-field>
                     <v-text-field
-                      label="name"
+                      label="ชื่อ"
                       required
-                      v-model="chname"
+                      v-model="ch.name"
                     ></v-text-field>
 
-                    <v-text-field label="msg" v-model="chmsg"></v-text-field>
+                    <v-text-field
+                      label="คำคม"
+                      v-model="ch.message"
+                    ></v-text-field>
 
-                    <v-text-field label="home" v-model="chhome"></v-text-field>
+                    <!-- <v-text-field label="home" v-model="ch.home"></v-text-field> -->
+                    <v-select
+                      :items="items"
+                      v-model="ch.home"
+                      label="บ้าน"
+                    ></v-select>
                   </v-container>
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="blue-darken-1" text @click="dialog = false">
+                  <v-btn
+                    color="blue-darken-1"
+                    text
+                    @click="
+                      dialog = false;
+                      cancelEdit();
+                    "
+                  >
                     cancel
                   </v-btn>
                   <v-btn
@@ -157,7 +174,7 @@
                     text
                     @click="
                       dialog = false;
-                      saveEdit(card.id);
+                      saveEdit();
                     "
                   >
                     Save
@@ -175,7 +192,7 @@
               ></v-icon>
               <v-icon
                 @click="
-                  editCard(index);
+                  editCard(card.id, index);
                   dialog = true;
                 "
                 class="icon"
@@ -216,115 +233,129 @@
   </div>
 </template>
 <script>
-import { firestore } from "../config/firebase";
-export default {
-  data() {
-    return {
-      names: [],
-      urlInput: "",
-      nameInput: "",
-      homeInput: "",
-      messageInput: "",
-      deleteName: "",
-      nameSearch: "",
-      editName: "",
-      dialog: false,
-      dialogAdd: false,
-      churl: "",
-      chname: "",
-      chmsg: "",
-      chhome: "",
-      items: ["Re", "Tire", "Drop", "Pro"],
-    };
-  },
-  firestore: {
-    names: firestore.collection("Name"),
-  },
-  methods: {
-    addName() {
-      firestore.collection("Name").add({
-        url: this.urlInput,
-        name: this.nameInput,
-        message: this.messageInput,
-        home: this.homeInput,
-      });
-      this.urlInput = "";
-      this.nameInput = "";
-      this.messageInput = "";
-      this.homeInput = "";
+  import { firestore } from "../config/firebase";
+  export default {
+    data() {
+      return {
+        names: [],
+        urlInput: "",
+        nameInput: "",
+        homeInput: "",
+        messageInput: "",
+        deleteName: "",
+        nameSearch: "",
+        editName: "",
+        dialog: false,
+        dialogAdd: false,
+        // churl: "",
+        // chname: "",
+        // chmsg: "",
+        // chhome: "",
+        ch: {
+          url: "",
+          names: "",
+          message: "",
+          home: "",
+        },
+        items: ["Drop", "Pro", "Re", "Tire", "TA"],
+        ID: "",
+      };
     },
-    deleteCard(id) {
-      firestore.collection("Name").doc(id).delete();
+    firestore: {
+      names: firestore.collection("Name"),
     },
-    editCard(index) {
-      this.churl = this.names[index].url;
-      this.chname = this.names[index].name;
-      this.chmsg = this.names[index].message;
-      this.chhome = this.names[index].home;
-      
-
+    methods: {
+      addName() {
+        firestore.collection("Name").add({
+          url: this.urlInput,
+          name: this.nameInput,
+          message: this.messageInput,
+          home: this.homeInput,
+        });
+        this.urlInput = "";
+        this.nameInput = "";
+        this.messageInput = "";
+        this.homeInput = "";
+      },
+      deleteCard(id) {
+        firestore.collection("Name").doc(id).delete();
+      },
+      editCard(id, index) {
+        this.ch = {
+          url: this.names[index].url,
+          name: this.names[index].name,
+          message: this.names[index].message,
+          home: this.names[index].home,
+        };
+        this.ID = id;
+      },
+      saveEdit() {
+        firestore.collection("Name").doc(this.ID).set({
+          url: this.ch.url,
+          name: this.ch.name,
+          message: this.ch.message,
+          home: this.ch.home,
+        });
+        this.ID = "";
+      },
+      cancelEdit() {
+        ch = {
+          url: "",
+          names: "",
+          message: "",
+          home: "",
+        };
+        this.ID = "";
+      },
     },
-    saveEdit(id) {
-      firestore.collection("Name").doc(id).update({
-        url: this.churl,
-        name: this.chname,
-        message: this.chmsg,
-        home: this.chhome,
-        
-        
-      });
-      this.churl  = "";
-        this.chname = "";
-        this.chmsg = "";
-        this.chhome  = "";
+    computed: {
+      filteredList() {
+        return this.names.filter((card) => {
+          return card.name
+            .toLowerCase()
+            .includes(this.nameSearch.toLowerCase());
+        });
+      },
     },
-  },
-  computed: {
-    filteredList() {
-      return this.names.filter((card) => {
-        return card.name.toLowerCase().includes(this.nameSearch.toLowerCase());
-      });
-    },
-  },
-};
+  };
 </script>
 <style scoped>
-* {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-}
-.grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 15px;
-}
-.icon {
-  display: none;
-}
-.card:hover .icon {
-  display: block;
-}
-.bak {
-  background-image: url("https://img.freepik.com/free-photo/pink-yellow-plain-background_53876-98329.jpg?w=2000");
-  background-size: cover;
-  min-height: 100vh;
-  height: 100%;
-}
-.bak h1 {
-  padding-top: 2rem;
-  padding-left: 2rem;
-}
-.add {
-  padding-left: 2rem;
-}
-.search {
-  padding-left: 2rem;
-}
-.addname {
-  padding-left: 2rem;
-}
-.box {
-  display: flex;
-}
+  * {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+  }
+  .icon {
+    display: none;
+  }
+  .card:hover .icon {
+    display: block;
+  }
+  .bak {
+    background-image: url("https://img.freepik.com/free-photo/pink-yellow-plain-background_53876-98329.jpg?w=2000");
+    background-size: cover;
+    min-height: 100vh;
+    height: 100%;
+  }
+  .bak h1 {
+    padding-top: 2rem;
+    padding-left: 2rem;
+  }
+  .add {
+    padding-left: 2rem;
+  }
+  .search {
+    padding-left: 2rem;
+  }
+  .addname {
+    padding-left: 2rem;
+  }
+  .box {
+    display: flex;
+  }
 </style>
