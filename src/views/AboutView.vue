@@ -118,7 +118,7 @@
             v-for="(card, index) in filteredList"
             :key="card.id"
             class="mx-auto card"
-            style="width: 100%"
+            style="width: 100%"  
           >
             <img
               class="img"
